@@ -1,4 +1,3 @@
-[Full version at index.ipynb](index.ipynb)
 
 
 ```python
@@ -152,35 +151,35 @@ for test_file in scan_images(TEST_DIR, ext='.png'):
 ```
 
 
-![png](.github/output_11_0.png)
+![png](output_11_0.png)
 
 
 
-![png](.github/output_11_1.png)
+![png](output_11_1.png)
 
 
 
-![png](.github/output_11_2.png)
+![png](output_11_2.png)
 
 
 
-![png](.github/output_11_3.png)
+![png](output_11_3.png)
 
 
 
-![png](.github/output_11_4.png)
+![png](output_11_4.png)
 
 
 
-![png](.github/output_11_5.png)
+![png](output_11_5.png)
 
 
 
-![png](.github/output_11_6.png)
+![png](output_11_6.png)
 
 
 
-![png](.github/output_11_7.png)
+![png](output_11_7.png)
 
 
 ### Tính độ chính xác
@@ -229,4 +228,3 @@ print(f'Trung bình: {sum(avg_scores) / len(avg_scores)}')
  - Tỉ lệ nhận dạng được còn thấp (57.8%), do:
       - mô hình phụ thuộc lẫn nhau qua nhiều lớp: Face Detectorr > Face Recognizer
       - số lượng mẫu huấn luyện ít, nhiều nhiễu
-
