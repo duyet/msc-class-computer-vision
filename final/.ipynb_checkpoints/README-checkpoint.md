@@ -79,7 +79,7 @@ for file in scan_subdirs(train_dir):
             'source': os.path.join(file_path, img),
             'faceNP': faceNP
         })
-        faceId +=1
+    faceId +=1
         
 faces = []
 Ids = []
@@ -103,10 +103,10 @@ for row in DBFaces:
 
 ### 2. Face Recognizer
 
-Để xây dựng model face recognizer, một phương pháp phổ biến là sử dụng **LBPH (1) (Local Binary Patterns Histograms)** để làm đặc trưng vector cho ảnh khuôn mặt, sau đó sử dụng một phương pháp máy học giám sát bất kỳ để thực hiện việc nhận dạng. Ở bài tập này sử dụng thuật toán KNN (2).
+Để xây dựng model face recognizer, một phương pháp phổ biến là sử dụng **LBPH (1) (Local Binary Patterns Histograms)** để làm đặc trưng vector cho ảnh khuôn mặt, sau đó sử dụng một phương pháp máy học giám sát bất kỳ để thực hiện việc nhận dạng. 
 
 - (1) https://docs.opencv.org/2.4/modules/contrib/doc/facerec/facerec_tutorial.html#local-binary-patterns-histograms
-- (2) https://en.wikipedia.org/wiki/K-nearest_neighbors_algorithm
+
 
 
 ```python
@@ -183,7 +183,50 @@ for test_file in scan_images(TEST_DIR, ext='.png'):
 ![png](.github/output_11_7.png)
 
 
+### Tính độ chính xác
+
+- Chia bộ data thành train và test, tỉ lệ 70/30, 80/20.
+- Với mỗi tỉ lệ, thực hiện 1000 lần và tính độ chính xác trung bình.
+
 
 ```python
+from sklearn.model_selection import train_test_split
 
+avg_scores = []
+for test_size in [0.1, 0.2, 0.3]:
+    scores = []
+    for i in range(1000):
+        X_train, X_test, y_train, y_test = train_test_split(
+            faces, np.array(Ids),
+            test_size=test_size, random_state=i)
+
+        recognizer = cv2.face.LBPHFaceRecognizer_create()
+        recognizer.train(X_train, y_train)
+
+        sample_true = 0
+        for (X, y) in zip(X_test, y_test):
+            if recognizer.predict(X)[0] == y:
+                sample_true += 1
+
+        scores.append(sample_true * 100 / len(y_test))
+    
+    avg_score = sum(scores) / len(scores)
+    avg_scores.append(avg_score)
+    print(f'Độ chính xác ({100 - 100 * test_size}/{100 * test_size}): {avg_score}%')
+    
+print(f'Trung bình: {sum(avg_scores) / len(avg_scores)}')
 ```
+
+    Độ chính xác (90.0/10.0): 60.39999999999998%
+    Độ chính xác (80.0/20.0): 57.36666666666668%
+    Độ chính xác (70.0/30.0): 54.7875%
+    Trung bình: 57.51805555555555
+
+
+## Kết quả đạt được
+ - Face Detector sử dụng các đặc trưng như Haar hiện đã có độ chính xác cao.
+ - Face Recognizer cho kết quả nhanh, nhưng chưa tốt lắm.
+ - Tỉ lệ nhận dạng được còn thấp (57.8%), do:
+      - mô hình phụ thuộc lẫn nhau qua nhiều lớp: Face Detectorr > Face Recognizer
+      - số lượng mẫu huấn luyện ít, nhiều nhiễu
+
